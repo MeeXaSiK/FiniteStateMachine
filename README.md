@@ -35,6 +35,12 @@ public StateMachine StateMachine { get; } = new StateMachine();
 
 Create some states for an entity. In states you can override methods you need: `OnEnter()`, `OnRun()`, `OnExit()`.
 
+| Method | Info |
+| ------ | ---- |
+| `OnEnter()` | Called once upon entering the state |
+| `OnRun()` | Execution is determined by update methods |
+| `OnExit()` | Called once when exiting the state |
+
 For example, let's create two states:
 
 `AwaitingState` is necessary to wait for the entity of some condition
