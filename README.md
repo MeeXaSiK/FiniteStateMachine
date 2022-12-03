@@ -125,13 +125,13 @@ Let's imagine a situation:
 
 We want to switch from the `AwatingState` to the `FollowingState` if a target is found. We also want to switch back to the `AwaitingState` if the target is lost. `AddTransition` method will help us with this, let's add two transitions:
 
-Add transition from `AwaitingState` to `FollowingState`
+From `AwaitingState` to `FollowingState`
 
 ```csharp
 StateMachine.AddTransition(from: _awaitingState, to: _followingState, condition: () => Target != null);
 ```
 
-Add transition from `FollowingState` to `AwaitingState`
+From `FollowingState` to `AwaitingState`
 
 ```csharp
 StateMachine.AddTransition(from: _followingState, to: _awaitingState, condition: () => Target == null);
