@@ -78,7 +78,7 @@ public class FollowingState : State
 
     public override void OnRun()
     {
-        Follower.Follow(Target.position);
+        Follower.Follow(Target);
     }
 }
 ```
