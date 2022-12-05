@@ -148,9 +148,15 @@ StateMachine.AddAnyTransition(to: _awaitingState, condition: () => health.IsAliv
 
 ### 5. How to launch the StateMachine
 
-For the launch of `StateMachine` you need to call the `Run()` method in `Update()`:
+For the launch of `StateMachine` you need to set first state and call the `Run()` method in `Update()`:
 
 ```csharp
+
+private void Start()
+{
+    StateMachine.SetState(_awaitingState);
+}
+
 private void Update()
 {
     StateMachine.Run();
