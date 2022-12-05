@@ -51,12 +51,7 @@ namespace NTC.ContextStateMachine
         {
             if (TransitionsEnabled)
             {
-                CurrentTransition = GetTransition();
-
-                if (CurrentTransition != null)
-                {
-                    SetState(CurrentTransition.To);
-                }   
+                SetStateByTransitions();
             }
 
             if (HasCurrentState)
@@ -65,6 +60,16 @@ namespace NTC.ContextStateMachine
             }
         }
 
+        public void SetStateByTransitions()
+        {
+            CurrentTransition = GetTransition();
+
+            if (CurrentTransition != null)
+            {
+                SetState(CurrentTransition.To);
+            }   
+        }
+        
         private void PrepareCurrentState()
         {
             CurrentState.IsActive = true;
