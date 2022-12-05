@@ -7,7 +7,7 @@ namespace NTC.ContextStateMachine
     {
         public event Action<State> OnStateChanged;
 
-        public bool AutoSelectState { get; set; }
+        public bool TransitionsEnabled { get; set; } = true;
         public bool HasCurrentState { get; private set; }
         
         public State CurrentState { get; private set; }
@@ -16,11 +16,6 @@ namespace NTC.ContextStateMachine
         private readonly List<Transition> _anyTransitions = new(16);
         private readonly List<Transition> _transitions = new(16);
 
-        public StateMachine(bool autoSelectState = true)
-        {
-            AutoSelectState = autoSelectState;
-        }
-        
         public void SetState(State state)
         {
             if (state == null)
@@ -54,7 +49,7 @@ namespace NTC.ContextStateMachine
         
         public void Run()
         {
-            if (AutoSelectState)
+            if (TransitionsEnabled)
             {
                 CurrentTransition = GetTransition();
 
