@@ -227,3 +227,9 @@ Then you can change state of `StateMachine` by method `SetState()`:
 ```csharp
 StateMachine.SetState(newState);
 ```
+
+Also if you don't want the `StateMachine` to choose the state in the update method, you can use the method `SetStateByTransitions()` when you need:
+
+```csharp
+StateMachine.SetStateByTransitions();
+```
