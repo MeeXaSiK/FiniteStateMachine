@@ -14,7 +14,7 @@ Lightweight Context State Machine for Unity
   * [Binding transitions for states](#4-bind-transitions-for-states)
   * [Launching the StateMachine](#5-launch-the-statemachine)
   * [Result](#what-should-be-the-result)
-  * [Disable Transitions](#manual-state-selection)
+  * [Disable Transitions](#disable-transitions)
   
 ## Installation
 
@@ -214,7 +214,7 @@ public class Sample : MonoBehaviour
 }
 ```
 
-### Manual state selection
+### Disable Transitions
 
 If you want to set states manually, you can disable `TransitionsEnabled` in the `StateMachine`:
 
