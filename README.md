@@ -8,13 +8,13 @@ Lightweight Context State Machine for Unity
 
 * [Installation](#installation)
 * [How to use](#how-to-use)
-  * [How to implement StateMachine](#1-implement-statemachine-field-or-property)
-  * [How to create some states](#2-how-to-create-some-states)
-  * [How to install states in your class](#3-how-to-install-states-in-your-class)
-  * [How to bind transitions for states](#4-how-to-bind-transitions-for-states)
-  * [How to launch the StateMachine](#5-how-to-launch-the-statemachine)
+  * [Implementing StateMachine](#1-implement-statemachine-field-or-property)
+  * [Creating some states](#2-create-some-states)
+  * [Installing states in your class](#3-install-states-in-your-class)
+  * [Binding transitions for states](#4-bind-transitions-for-states)
+  * [Launching the StateMachine](#5-launch-the-statemachine)
   * [Result](#what-should-be-the-result)
-  * [Manual state selection](#manual-state-selection)
+  * [Disable Transitions](#manual-state-selection)
   
 ## Installation
 
@@ -31,7 +31,7 @@ public readonly StateMachine StateMachine = new StateMachine();
 public StateMachine StateMachine { get; } = new StateMachine();
 ```
 
-### 2. How to create some states
+### 2. Create some states
 
 Create some states for an entity. In states you can override methods you need: `OnEnter()`, `OnRun()`, `OnExit()`.
 
@@ -83,7 +83,7 @@ public class FollowingState : State
 }
 ```
 
-### 3. How to install states in your class
+### 3. Install states in your class
 
 ```csharp
 [RequireComponent(typeof(IFollower))]
@@ -112,7 +112,7 @@ public class Sample : MonoBehaviour
 }
 ```
 
-### 4. How to bind transitions for states
+### 4. Bind transitions for states
 
 We have methods for binding transitions such as `AddTransition` and `AddAnyTransition`.
 
@@ -146,7 +146,7 @@ Add transition from any state to idle `AwaitingState`
 StateMachine.AddAnyTransition(to: _awaitingState, condition: () => health.IsAlive == false);
 ```
 
-### 5. How to launch the StateMachine
+### 5. Launch the StateMachine
 
 For the launch of `StateMachine` you need to set first state and call the `Run()` method in `Update()`:
 
@@ -184,6 +184,8 @@ public class Sample : MonoBehaviour
         BindTransitions();
         
         BindAnyTransitions();
+        
+        StateMachine.SetState(_awaitingState);
     }
 
     private void InstallStates()
@@ -214,14 +216,10 @@ public class Sample : MonoBehaviour
 
 ### Manual state selection
 
-If you want to set states manually, you can disable `AutoSelectState` in the `StateMachine`:
+If you want to set states manually, you can disable `TransitionsEnabled` in the `StateMachine`:
 
 ```csharp
-StateMachine.AutoSelectState = false;
-```
-
-```csharp
-public StateMachine StateMachine { get; } = new StateMachine(autoSelectState: false);
+StateMachine.TransitionsEnabled = false;
 ```
 
 Then you can change state of `StateMachine` by method `SetState()`:
