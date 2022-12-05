@@ -1,6 +1,6 @@
 # Context State Machine
 Lightweight Context State Machine for Unity
-* Optionally selects states automatically
+* Supports condition transitions
 * Can be used for any entity
 * Awesome performance
 
