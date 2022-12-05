@@ -8,6 +8,7 @@ namespace NTC.ContextStateMachine
         public event Action<State> OnStateChanged;
 
         public bool AutoSelectState { get; set; }
+        public bool HasCurrentState { get; private set; }
         
         public State CurrentState { get; private set; }
         public Transition CurrentTransition { get; private set; }
@@ -27,13 +28,17 @@ namespace NTC.ContextStateMachine
             
             if (state == CurrentState)
                 return;
-            
-            CurrentState?.OnExit();
+
+            if (HasCurrentState)
+            {
+                DisposeCurrentState();
+            }
             
             CurrentState = state;
+            HasCurrentState = true;
             
-            CurrentState.OnEnter();
-            
+            PrepareCurrentState();
+
             OnStateChanged?.Invoke(state);
         }
         
@@ -59,7 +64,22 @@ namespace NTC.ContextStateMachine
                 }   
             }
 
-            CurrentState?.OnRun();
+            if (HasCurrentState)
+            {
+                CurrentState.OnRun();
+            }
+        }
+
+        private void PrepareCurrentState()
+        {
+            CurrentState.IsActive = true;
+            CurrentState.OnEnter();
+        }
+
+        private void DisposeCurrentState()
+        {
+            CurrentState.IsActive = false;
+            CurrentState.OnExit();
         }
 
         private Transition GetTransition()
@@ -74,6 +94,11 @@ namespace NTC.ContextStateMachine
 
             for (var i = 0; i < _transitions.Count; i++)
             {
+                if (_transitions[i].From.IsActive == false)
+                {
+                    continue;
+                }
+                
                 if (_transitions[i].Condition())
                 {
                     return _transitions[i];
