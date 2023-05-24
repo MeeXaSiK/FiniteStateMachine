@@ -3,48 +3,61 @@ using System.Collections.Generic;
 
 namespace NTC.ContextStateMachine
 {
-    public class StateMachine
+    public class StateMachine<TInitializer>
     {
-        public event Action<State> OnStateChanged;
-
         public bool TransitionsEnabled { get; set; } = true;
         public bool HasCurrentState { get; private set; }
         
-        public State CurrentState { get; private set; }
-        public Transition CurrentTransition { get; private set; }
+        public State<TInitializer> CurrentState { get; private set; }
+        public Transition<TInitializer> CurrentTransition { get; private set; }
 
-        private readonly List<Transition> _anyTransitions = new(16);
-        private readonly List<Transition> _transitions = new(16);
+        private readonly HashSet<State<TInitializer>> _states = new(16);
+        private readonly List<Transition<TInitializer>> _anyTransitions = new(16);
+        private readonly List<Transition<TInitializer>> _transitions = new(16);
 
-        public void SetState(State state)
+        private bool _isStatesAdded;
+
+        public StateMachine(params State<TInitializer>[] states)
         {
-            if (state == null)
-                throw new NullReferenceException(nameof(state), null);
-            
-            if (state == CurrentState)
-                return;
+            AddStates(states);
+        }
 
-            if (HasCurrentState)
+        public void AddStates(params State<TInitializer>[] states)
+        {
+            if (_isStatesAdded)
             {
-                DisposeCurrentState();
+                throw new Exception("States already added!");
             }
             
-            CurrentState = state;
-            HasCurrentState = true;
-            
-            PrepareCurrentState();
+            foreach (var state in states)
+            {
+                if (state == null)
+                {
+                    throw new NullReferenceException(nameof(state));
+                }
+                
+                _states.Add(state);
+            }
 
-            OnStateChanged?.Invoke(state);
+            if (states.Length > 0)
+            {
+                _isStatesAdded = true;
+            }
+        }
+
+        public void SetState<TState>() where TState : State<TInitializer>
+        {
+            SetState(typeof(TState));
         }
         
-        public void AddTransition(State from, State to, Func<bool> condition)
+        public void AddTransition(State<TInitializer> from, State<TInitializer> to, Func<bool> condition)
         {
-            _transitions.Add(new Transition(from, to, condition));
+            _transitions.Add(new Transition<TInitializer>(from, to, condition));
         }
 
-        public void AddAnyTransition(State to, Func<bool> condition)
+        public void AddAnyTransition(State<TInitializer> to, Func<bool> condition)
         {
-            _anyTransitions.Add(new Transition(null, to, condition));
+            _anyTransitions.Add(new Transition<TInitializer>(null, to, condition));
         }
         
         public void Run()
@@ -64,25 +77,59 @@ namespace NTC.ContextStateMachine
         {
             CurrentTransition = GetTransition();
 
-            if (CurrentTransition != null)
+            if (CurrentTransition == null)
+                return;
+            
+            if (CurrentState == CurrentTransition.To)
+                return;
+            
+            SetState(CurrentTransition.To.GetType());
+        }
+
+        public TState GetState<TState>() where TState : State<TInitializer>
+        {
+            return (TState) GetState(typeof(TState));
+        }
+
+        private State<TInitializer> GetState(Type type)
+        {
+            foreach (var state in _states)
             {
-                SetState(CurrentTransition.To);
-            }   
+                if (state.GetType() == type)
+                {
+                    return state;
+                }
+            }
+
+            throw new Exception($"The <{type.Name}> is not found!");
         }
         
-        private void PrepareCurrentState()
+        private void SetState(Type type)
+        {
+            if (HasCurrentState)
+            {
+                ExitCurrentState();
+            }
+
+            CurrentState = GetState(type);
+            HasCurrentState = true;
+            
+            EnterCurrentState();
+        }
+
+        private void EnterCurrentState()
         {
             CurrentState.IsActive = true;
             CurrentState.OnEnter();
         }
 
-        private void DisposeCurrentState()
+        private void ExitCurrentState()
         {
             CurrentState.IsActive = false;
             CurrentState.OnExit();
         }
 
-        private Transition GetTransition()
+        private Transition<TInitializer> GetTransition()
         {
             for (var i = 0; i < _anyTransitions.Count; i++)
             {

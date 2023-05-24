@@ -1,7 +1,8 @@
 ﻿namespace NTC.ContextStateMachine
 {
-    public abstract class State
+    public abstract class State<TInitializer>
     {
+        public TInitializer Initializer { get; }
         public bool IsActive { get; set; }
 
         public virtual void OnEnter() { }

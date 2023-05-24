@@ -4,29 +4,19 @@ namespace NTC.ContextStateMachine
 {
     public static class StateMachineShortCuts
     {
-        public static void SetState(this IStateMachineBased stateMachineBased, State state)
+        public static void SetState<T>(this IStateMachineBased<T> stateMachineBased) where T : State<T>
         {
-            stateMachineBased.StateMachine.SetState(state);
+            stateMachineBased.StateMachine.SetState<T>();
         }
 
-        public static void AddTransition(this IStateMachineBased stateMachineBased, State from, State to, Func<bool> condition)
+        public static void AddTransition<T>(this IStateMachineBased<T> stateMachineBased, State<T> from, State<T> to, Func<bool> condition)
         {
             stateMachineBased.StateMachine.AddTransition(from, to, condition);
         }
         
-        public static void AddAnyTransition(this IStateMachineBased stateMachineBased, State to, Func<bool> condition)
+        public static void AddAnyTransition<T>(this IStateMachineBased<T> stateMachineBased, State<T> to, Func<bool> condition)
         {
             stateMachineBased.StateMachine.AddAnyTransition(to, condition);
-        }
-
-        public static void AddListenerOnStateChanged(this IStateMachineBased stateMachineBased, Action<State> action)
-        {
-            stateMachineBased.StateMachine.OnStateChanged += action;
-        }
-        
-        public static void RemoveListenerOnStateChanged(this IStateMachineBased stateMachineBased, Action<State> action)
-        {
-            stateMachineBased.StateMachine.OnStateChanged -= action;
         }
     }
 }

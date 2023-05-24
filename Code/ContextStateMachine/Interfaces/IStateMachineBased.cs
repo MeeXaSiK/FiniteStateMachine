@@ -1,7 +1,7 @@
 ﻿namespace NTC.ContextStateMachine
 {
-    public interface IStateMachineBased
+    public interface IStateMachineBased<TInitializer>
     {
-        public StateMachine StateMachine { get; }
+        public StateMachine<TInitializer> StateMachine { get; }
     }
 }

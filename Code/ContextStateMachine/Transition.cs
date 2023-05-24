@@ -2,13 +2,13 @@
 
 namespace NTC.ContextStateMachine
 {
-    public class Transition
+    public class Transition<TInitializer>
     {
         public Func<bool> Condition { get; }
-        public State To { get; }
-        public State From { get; }
+        public State<TInitializer> From { get; }
+        public State<TInitializer> To { get; }
 
-        public Transition(State from, State to, Func<bool> condition)
+        public Transition(State<TInitializer> from, State<TInitializer> to, Func<bool> condition)
         {
             From = from;
             To = to;
