@@ -8,11 +8,12 @@ Lightweight Context State Machine for Unity
 
 * [Installation](#installation)
 * [How to use](#how-to-use)
-  * [Implementing StateMachine](#1-implement-statemachine-field-or-property)
+  * [Implementing StateMachine](#1-implement-statemachinetinitializer-field-or-property)
   * [Creating some states](#2-create-some-states)
   * [Installing states in your class](#3-install-states-in-your-class)
-  * [Binding transitions for states](#4-bind-transitions-for-states)
-  * [Launching the StateMachine](#5-launch-the-statemachine)
+  * [Adding states to the StateMachine](#4-add-states-to-the-statemachine)
+  * [Binding transitions for states](#5-bind-transitions-for-states)
+  * [Launching the StateMachine](#6-launch-the-statemachine)
   * [Result](#what-should-be-the-result)
   * [Disable Transitions](#disable-transitions)
   
@@ -22,13 +23,15 @@ Add files in your Unity project.
 
 ## How to use
 
-### 1. Implement `StateMachine` field or property
+### 1. Implement `StateMachine<TInitializer>` field or property
+
+`TInitializer` is the class to which the states will belong
 
 ```csharp
-public readonly StateMachine StateMachine = new StateMachine();
+public readonly StateMachine<Sample> StateMachine = new StateMachine<Sample>();
 ```
 ```csharp
-public StateMachine StateMachine { get; } = new StateMachine();
+public StateMachine<Sample> StateMachine { get; } = new StateMachine<Sample>();
 ```
 
 ### 2. Create some states
@@ -46,10 +49,10 @@ For example, let's create two states:
 `AwaitingState` is necessary to wait for the entity of some condition
 
 ```csharp
-public class AwaitingState : State
+public class AwaitingState : State<Sample>
 {
     private IFollower Follower { get; }
-        
+    
     public AwaitingState(IFollower follower)
     {
         Follower = follower;
@@ -65,7 +68,7 @@ public class AwaitingState : State
 `FollowingState` is necessary for the entity to follow some target
 
 ```csharp
-public class FollowingState : State
+public class FollowingState : State<Sample>
 {
     private IFollower Follower { get; }
     private Transform Target { get; }
@@ -91,7 +94,7 @@ public class Sample : MonoBehaviour
 {
     [SerializeField] private Health health;
     
-    public StateMachine StateMachine { get; } = new StateMachine();
+    public StateMachine<Sample> StateMachine { get; } = new StateMachine<Sample>();
     public Transform Target { get; set; }
 
     private AwaitingState _awaitingState;
@@ -112,7 +115,20 @@ public class Sample : MonoBehaviour
 }
 ```
 
-### 4. Bind transitions for states
+### 4. Add states to the StateMachine
+
+You can add states with a method or a constructor
+
+```csharp
+StateMachine.AddStates(_awaitingState, _followingState);
+```
+```csharp
+StateMachine = new StateMachine<Sample>(_awaitingState, _followingState);
+```
+
+You can only add states to the StateMachine once!
+
+### 5. Bind transitions for states
 
 We have methods for binding transitions such as `AddTransition` and `AddAnyTransition`.
 
@@ -146,7 +162,7 @@ Add transition from any state to idle `AwaitingState`
 StateMachine.AddAnyTransition(to: _awaitingState, condition: () => health.IsAlive == false);
 ```
 
-### 5. Launch the StateMachine
+### 6. Launch the StateMachine
 
 For the launch of `StateMachine` you need to set first state and call the `Run()` method in `Update()`:
 
@@ -154,7 +170,7 @@ For the launch of `StateMachine` you need to set first state and call the `Run()
 
 private void Start()
 {
-    StateMachine.SetState(_awaitingState);
+    StateMachine.SetState<AwaitingState>();
 }
 
 private void Update()
@@ -166,12 +182,15 @@ private void Update()
 ### What should be the result
 
 ```csharp
+using NTC.ContextStateMachine;
+using UnityEngine;
+
 [RequireComponent(typeof(IFollower))]
 public class Sample : MonoBehaviour
 {
     [SerializeField] private Health health;
-    
-    public StateMachine StateMachine { get; } = new StateMachine();
+
+    public StateMachine<Sample> StateMachine { get; } = new StateMachine<Sample>();
     public Transform Target { get; set; }
 
     private AwaitingState _awaitingState;
@@ -185,7 +204,7 @@ public class Sample : MonoBehaviour
         
         BindAnyTransitions();
         
-        StateMachine.SetState(_awaitingState);
+        StateMachine.SetState<AwaitingState>();
     }
 
     private void InstallStates()
@@ -194,6 +213,8 @@ public class Sample : MonoBehaviour
 
         _awaitingState = new AwaitingState(follower);
         _followingState = new FollowingState(follower, Target);
+
+        StateMachine.AddStates(_awaitingState, _followingState);
     }
 
     private void BindTransitions()
@@ -222,10 +243,10 @@ If you want to set states manually, you can disable `TransitionsEnabled` in the 
 StateMachine.TransitionsEnabled = false;
 ```
 
-Then you can change state of `StateMachine` by method `SetState()`:
+Then you can change state of `StateMachine` by method `SetState<TState>()`:
 
 ```csharp
-StateMachine.SetState(newState);
+StateMachine.SetState<TState>();
 ```
 
 Also if you don't want the `StateMachine` to choose the state in the update method, you can use the method `SetStateByTransitions()` when you need:
