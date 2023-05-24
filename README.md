@@ -134,8 +134,8 @@ We have methods for binding transitions such as `AddTransition` and `AddAnyTrans
 
 | Method | Info |
 | ------ | ---- |
-| `AddTransition(from, to, condition)` | Takes two states as arguments, from which state we want to go to the second state and the transition condition |
-| `AddAnyTransition(to, condition)` | Takes as arguments the one state we want to switch to and the transition condition |
+| `AddTransition<TStateFrom, TStateTo>(Func<bool> condition)` | Takes two states as arguments, from which state we want to go to the second state and the transition condition |
+| `AddAnyTransition<TStateTo>(Func<bool> condition)` | Takes as arguments the one state we want to switch to and the transition condition |
 
 Let's imagine a situation:
 
@@ -144,13 +144,13 @@ We want to switch from the `AwatingState` to the `FollowingState` if a target is
 From `AwaitingState` to `FollowingState`
 
 ```csharp
-StateMachine.AddTransition(from: _awaitingState, to: _followingState, condition: () => Target != null);
+StateMachine.AddTransition<AwaitingState, FollowingState>(condition: () => Target != null);
 ```
 
 From `FollowingState` to `AwaitingState`
 
 ```csharp
-StateMachine.AddTransition(from: _followingState, to: _awaitingState, condition: () => Target == null);
+StateMachine.AddTransition<FollowingState, AwaitingState>(condition: () => Target == null);
 ```
 
 We will also add a transition to the `AwaitingState` from any state.
@@ -159,7 +159,7 @@ Why might this be needed? If the entity is not alive, then it is logical that it
 Add transition from any state to idle `AwaitingState`
 
 ```csharp
-StateMachine.AddAnyTransition(to: _awaitingState, condition: () => health.IsAlive == false);
+StateMachine.AddAnyTransition<AwaitingState>(condition: () => health.IsAlive == false);
 ```
 
 ### 6. Launch the StateMachine
@@ -206,26 +206,26 @@ public class Sample : MonoBehaviour
         
         StateMachine.SetState<AwaitingState>();
     }
-
+    
     private void InstallStates()
     {
         var follower = GetComponent<IFollower>();
-
+    
         _awaitingState = new AwaitingState(follower);
         _followingState = new FollowingState(follower, Target);
-
+    
         StateMachine.AddStates(_awaitingState, _followingState);
     }
-
+    
     private void BindTransitions()
     {
-        StateMachine.AddTransition(from: _awaitingState, to: _followingState, condition: () => Target != null);
-        StateMachine.AddTransition(from: _followingState, to: _awaitingState, condition: () => Target == null);
+        StateMachine.AddTransition<AwaitingState, FollowingState>(condition: () => Target != null);
+        StateMachine.AddTransition<FollowingState, AwaitingState>(condition: () => Target == null);
     }
     
     private void BindAnyTransitions()
     {
-        StateMachine.AddAnyTransition(to: _awaitingState, condition: () => health.IsAlive == false);
+        StateMachine.AddAnyTransition<AwaitingState>(condition: () => health.IsAlive == false);
     }
     
     private void Update()
