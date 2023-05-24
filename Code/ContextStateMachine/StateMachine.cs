@@ -50,14 +50,22 @@ namespace NTC.ContextStateMachine
             SetState(typeof(TState));
         }
         
-        public void AddTransition(State<TInitializer> from, State<TInitializer> to, Func<bool> condition)
+        public void AddTransition<TStateFrom, TStateTo>(Func<bool> condition)
+            where TStateFrom : State<TInitializer>
+            where TStateTo : State<TInitializer>
         {
-            _transitions.Add(new Transition<TInitializer>(from, to, condition));
+            var stateFrom = GetState(typeof(TStateFrom));
+            var stateTo = GetState(typeof(TStateTo));
+            
+            _transitions.Add(new Transition<TInitializer>(stateFrom, stateTo, condition));
         }
 
-        public void AddAnyTransition(State<TInitializer> to, Func<bool> condition)
+        public void AddAnyTransition<TStateTo>(Func<bool> condition)
+            where TStateTo : State<TInitializer>
         {
-            _anyTransitions.Add(new Transition<TInitializer>(null, to, condition));
+            var stateTo = GetState(typeof(TStateTo));
+
+            _anyTransitions.Add(new Transition<TInitializer>(null, stateTo, condition));
         }
         
         public void Run()
