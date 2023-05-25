@@ -48,12 +48,14 @@ For example, let's create two states:
 
 `AwaitingState` is necessary to wait for the entity of some condition
 
+You also need to pass an `TInitializer` to the base State constructor. In this case, the initializer is the `Sample`
+
 ```csharp
 public class AwaitingState : State<Sample>
 {
     private IFollower Follower { get; }
     
-    public AwaitingState(IFollower follower)
+    public AwaitingState(IFollower follower, Sample sample) : base(sample)
     {
         Follower = follower;
     }
@@ -73,7 +75,7 @@ public class FollowingState : State<Sample>
     private IFollower Follower { get; }
     private Transform Target { get; }
         
-    public FollowingState(IFollower follower, Transform target)
+    public FollowingState(IFollower follower, Transform target, Sample sample) : base(sample)
     {
         Follower = follower;
         Target = target;
@@ -109,8 +111,8 @@ public class Sample : MonoBehaviour
     {
         var follower = GetComponent<IFollower>();
 
-        _awaitingState = new AwaitingState(follower);
-        _followingState = new FollowingState(follower, Target);
+        _awaitingState = new AwaitingState(follower, this);
+        _followingState = new FollowingState(follower, Target, this);
     }
 }
 ```
@@ -211,8 +213,8 @@ public class Sample : MonoBehaviour
     {
         var follower = GetComponent<IFollower>();
     
-        _awaitingState = new AwaitingState(follower);
-        _followingState = new FollowingState(follower, Target);
+        _awaitingState = new AwaitingState(follower, this);
+        _followingState = new FollowingState(follower, Target, this);
     
         StateMachine.AddStates(_awaitingState, _followingState);
     }
