@@ -7,7 +7,7 @@
 	},
     "displayName": "Finite State Machine",
     "description": "This is a lightweight Finite State Machine.",
-    "unity": "2020.3",
+    "unity": "2021.3",
     "version": "2.0.0",
     "keywords": [
         "finitestatemachine",
