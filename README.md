@@ -1,5 +1,5 @@
-# Context State Machine
-Lightweight Context State Machine for Unity
+# Finite State Machine
+Lightweight Finite State Machine for Unity
 * Supports condition transitions
 * Can be used for any entity
 * Awesome performance
