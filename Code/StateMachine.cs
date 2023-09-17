@@ -14,6 +14,11 @@ namespace NTC.FiniteStateMachine
         private readonly List<Transition<TInitializer>> _transitions =
             new List<Transition<TInitializer>>(Constants.DefaultCollectionSize);
         
+        public StateMachine(params IState<TInitializer>[] states)
+        {
+            AddStates(states);
+        }
+        
         public bool TransitionsEnabled { get; set; } = true;
         public bool HasCurrentState { get; private set; }
         public bool HasStatesBeenAdded { get; private set; }
@@ -21,11 +26,6 @@ namespace NTC.FiniteStateMachine
         public IState<TInitializer> CurrentState { get; private set; }
         public Transition<TInitializer> CurrentTransition { get; private set; }
 
-        public StateMachine(params IState<TInitializer>[] states)
-        {
-            AddStates(states);
-        }
-        
         public void AddStates(params IState<TInitializer>[] states)
         {
 #if DEBUG
