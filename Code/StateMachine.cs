@@ -38,6 +38,8 @@ namespace NTC.FiniteStateMachine
             {
                 AddState(state);
             }
+
+            HasStatesBeenAdded = true;
         }
         
         public TState GetState<TState>() where TState : IState<TInitializer>
