@@ -20,7 +20,7 @@ This is a lightweight **Finite State Machine** for your **C#** projects
   * [Binding transitions for states](#5-bind-transitions-for-states)
   * [Launching the StateMachine](#6-launch-the-statemachine)
   * [Result](#what-should-be-the-result)
-  * [Disable Transitions](#disable-transitions)
+* [Disabling Transitions](#-disabling-transitions)
   
 # ▶ Installation
 
@@ -277,7 +277,7 @@ public class Sample : MonoBehaviour
 }
 ```
 
-### Disable Transitions
+# 🔸 Disabling Transitions
 
 If you want to set states manually, you can disable `TransitionsEnabled` in the `StateMachine`:
 
