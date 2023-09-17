@@ -114,7 +114,7 @@ namespace NTC.FiniteStateMachine
         {
 #if DEBUG
             if (state == null)
-                throw new NullReferenceException(nameof(state));
+                throw new ArgumentNullException(nameof(state));
 #endif
             Type stateType = state.GetType();
 #if DEBUG
