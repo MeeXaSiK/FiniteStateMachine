@@ -94,7 +94,7 @@ namespace NTC.FiniteStateMachine
             if (CurrentState == CurrentTransition.To)
                 return;
             
-            SetState(CurrentTransition.To.GetType());
+            SetState(CurrentTransition.To);
         }
         
         public void Run()
@@ -133,15 +133,22 @@ namespace NTC.FiniteStateMachine
 
             throw new Exception($"You didn't add the <{type}> state!");
         }
-        
+
         private void SetState(Type type)
+        {
+            var state = GetState(type);
+            
+            SetState(state);
+        }
+        
+        private void SetState(IState<TInitializer> state)
         {
             if (HasCurrentState)
             {
                 CurrentState.OnExit();
             }
 
-            CurrentState = GetState(type);
+            CurrentState = state;
             HasCurrentState = true;
             CurrentState.OnEnter();
         }
