@@ -1,10 +1,12 @@
 # 🚄 Finite State Machine
 [![License](https://img.shields.io/github/license/meexasik/nightpool?color=318CE7&style=flat-square)](LICENSE.md) [![Version](https://img.shields.io/github/package-json/v/MeeXaSiK/FiniteStateMachine?color=318CE7&style=flat-square)](package.json) [![Unity](https://img.shields.io/badge/Unity-2021.3+-2296F3.svg?color=318CE7&style=flat-square)](https://unity.com/)
 
-This is a lightweight **Finite State Machine** for your projects based on C# 8+
+This is a lightweight **Finite State Machine** for your **C#** projects
 * ▶️ High performance
 * ▶️ Supports transitions
 * ▶️ Abstracted from the game engine
+
+> Requires C# 8+ version
 
 # 🌐 Navigation
 
