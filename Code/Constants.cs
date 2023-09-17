@@ -1,7 +1,7 @@
 ﻿namespace NTC.FiniteStateMachine
 {
-    public static class Constants
+    internal static class Constants
     {
-        public const int DefaultCollectionSize = 16;
+        internal const int DefaultCollectionSize = 16;
     }
 }
