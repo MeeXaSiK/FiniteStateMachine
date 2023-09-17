@@ -13,7 +13,12 @@ namespace NTC.FiniteStateMachine
         
         private readonly List<Transition<TInitializer>> _transitions =
             new List<Transition<TInitializer>>(Constants.DefaultCollectionSize);
-        
+
+        public StateMachine()
+        {
+            
+        }
+
         public StateMachine(params IState<TInitializer>[] states)
         {
             AddStates(states);
@@ -30,9 +35,10 @@ namespace NTC.FiniteStateMachine
         {
 #if DEBUG
             if (HasStatesBeenAdded)
-            {
                 throw new Exception("States have already been added!");
-            }
+            
+            if (states.Length == 0)
+                throw new Exception("You are trying to add an empty state array!");
 #endif
             foreach (var state in states)
             {
