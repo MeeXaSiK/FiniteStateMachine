@@ -25,10 +25,13 @@ namespace NTC.FiniteStateMachine
         }
         
         public bool TransitionsEnabled { get; set; } = true;
+        
         public bool HasCurrentState { get; private set; }
+        
         public bool HasStatesBeenAdded { get; private set; }
         
         public IState<TInitializer> CurrentState { get; private set; }
+        
         public Transition<TInitializer> CurrentTransition { get; private set; }
 
         public void AddStates(params IState<TInitializer>[] states)
@@ -55,6 +58,9 @@ namespace NTC.FiniteStateMachine
 
         public void SetState<TState>() where TState : IState<TInitializer>
         {
+            if (CurrentState is TState)
+                return;
+            
             SetState(typeof(TState));
         }
 
